@@ -1,22 +1,23 @@
-const { Toy ,validateToy} = require("../models/toyModel.js");
+const { Toy, validateToy } = require("../models/toyModel.js");
 const { decodeToken } = require("../utils/jwt");
 const bcrypt = require("bcryptjs");
 
 exports.toyCtrl = {
     searchToy: async (req, res) => {
-        const quary=req.body;
+        const quary = req.body;
         let perPage = req.query.perPage || 10;
-        const skip=(quary.page-1)*perPage;
+        const skip = (quary.page - 1) * perPage;
         try {
-            let {s} = req.query;
-            if(s){
+            let { s } = req.query;
+            if (s) {
                 let data = await Toy.find({ $or: [{ name: s }, { info: s }] })
-                .skip(skip).limit(perPage).populate('id_user');
+                    .skip(skip)
+                    .limit(perPage).populate('id_user');
                 res.send(data);
 
             }
-            else{
-                let data=await Toy.find().skip(skip).limit(perPage).populate('id_user');
+            else {
+                let data = await Toy.find().skip(skip).limit(perPage).populate('id_user');
                 res.send(data);
 
             }
@@ -44,13 +45,13 @@ exports.toyCtrl = {
     getToy: async (req, res) => {
         try {
             const toyId = req.params.id;
-    
+
             let data = await Toy.findById(toyId);
-    
+
             if (!data) {
                 return res.status(404).json({ msg: "Toy not found" });
             }
-    
+
             res.json(data);
         }
         catch (err) {
@@ -58,7 +59,7 @@ exports.toyCtrl = {
             res.status(500).json({ msg: "There was an error, please try again later", err });
         }
     },
-    
+
     toyByCategory: async (req, res) => {
         let perPage = req.query.perPage || 10;
         let page = req.query.page || 1;
@@ -85,33 +86,34 @@ exports.toyCtrl = {
         try {
             let minP = req.query.min;
             let maxP = req.query.max;
-            if (minP && maxP) {
-                let data = await Toy.find({ $and: [{ price: { $gte: minP } }, { price: { $lte: maxP } }] })
-
-                    .limit(perPage)
-                    .skip((page - 1) * perPage)
-                    .sort({ [sort]: reverse })
-                res.json(data);
+            let dbQuery = {};
+            if (minp && maxP) {
+                dbQuery = { ...dbQuery, $and: [{ price: { $gte: minP } }, { price: { $lte: maxP } }] }
             }
-            else if (maxP) {
-                let data = await Toy.find({ price: { $lte: maxP } })
+            // if (minP && maxP) {
+               
+            // }
+            // else if (maxP) {
+            //     let data = await Toy.find({ price: { $lte: maxP } })
+            //         .limit(perPage)
+            //         .skip((page - 1) * perPage)
+            //         .sort({ [sort]: reverse })
+            // } else if (minP) {
+            //     let data = await Toy.find({ price: { $gte: minP } })
+            //         .limit(perPage)
+            //         .skip((page - 1) * perPage)
+            //         .sort({ [sort]: reverse })
+            // } else {
+            //     let data = await Toy.find({})
+            //         .limit(perPage)
+            //         .skip((page - 1) * perPage)
+            //         .sort({ [sort]: reverse })
+            // }
+             let data = await Toy.find(dbQuery)
                     .limit(perPage)
                     .skip((page - 1) * perPage)
                     .sort({ [sort]: reverse })
-                res.json(data);
-            } else if (minP) {
-                let data = await Toy.find({ price: { $gte: minP } })
-                    .limit(perPage)
-                    .skip((page - 1) * perPage)
-                    .sort({ [sort]: reverse })
-                res.json(data);
-            } else {
-                let data = await Toy.find({})
-                    .limit(perPage)
-                    .skip((page - 1) * perPage)
-                    .sort({ [sort]: reverse })
-                res.json(data);
-            }
+            res.json(data);
         }
         catch (err) {
             console.log(err);
@@ -123,7 +125,7 @@ exports.toyCtrl = {
         const userId = res.locals.id_user;
         try {
             const newToy = new Toy(body);
-            newToy.id_user=userId;
+            newToy.id_user = userId;
             await newToy.save();
             res.status(201).send(newToy);
         } catch (error) {
@@ -131,29 +133,29 @@ exports.toyCtrl = {
             res.sendStatus(400);
         }
     },
-    editToy: async (req, res,next) => {
+    editToy: async (req, res, next) => {
         try {
             const { editId } = req.params;
             const updates = req.body;
-            const  id_user = res.locals.id_user;
+            const id_user = res.locals.id_user;
             const validate = validateToy(updates);
             if (validate.error)
                 throw Error(validate.error);
             let toy = await Toy.findOne({ _id: editId });
             if (!toy)
                 return res.status(404).send({ msg: "Toy not found" });
-            if (String(toy.id_user) !==  id_user)
+            if (String(toy.id_user) !== id_user)
                 return res.status(404).send({ msg: "You cannot update this toy" });
-    
+
             toy = await Toy.findByIdAndUpdate(editId, updates, { new: true });
             res.status(200).send(toy);
         } catch (error) {
             next(error);
         }
     },
-    deleteToy: async (req, res,next) => {
+    deleteToy: async (req, res, next) => {
         try {
-            const  id  = req.params.delId;
+            const id = req.params.delId;
             const body = req.body;
             const id_user = res.locals.id_user;
             let toy = await Toy.findOne({ _id: id });
@@ -163,7 +165,7 @@ exports.toyCtrl = {
                 return res.status(404).send({ msg: "You cannot delete this toy" });
             toy = await Toy.findByIdAndDelete(id, body, { new: true });
             res.status(200).send(toy);
-        
+
         } catch (error) {
             next(error);
         }
