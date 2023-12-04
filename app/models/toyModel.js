@@ -22,11 +22,13 @@ exports.Toy = mongoose.model("Toy", ToysSchema);
 
 exports.validateToy = (_reqBody) => {
     let schemaJoi = Joi.object({
-        name: Joi.string().min(2).max(99).required(),
-        info: Joi.string().min(3).max(100).required(),
-        category: Joi.string().min(3).max(15).required(),
+        name: Joi.string().min(2).max(99),
+        info: Joi.string().min(3).max(100),
+        category: Joi.string().min(3).max(15),
         img_url: Joi.string().allow(null, "").max(500),
-        price: Joi.number().min(1).max(9999).required()
+        price: Joi.number().min(1).max(9999),
+        date_created: Joi.date(),
+
     })
     return schemaJoi.validate(_reqBody);
 }

@@ -8,9 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
     </style>
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon_io 3/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io 3/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io 3/favicon-16x16.png">
+    
     <link rel="manifest" href="favicon_io/site.webmanifest">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
@@ -80,35 +78,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>GET</td>
-                        <td><a href="/users/myInfo">/users/myInfo</a></td>
-                        <td class="text-center">none</td>
-                        <td>Get your own info - by token.</td>
-                    </tr>
-                    <tr>
-                        <td>GET</td>
-                        <td><a href="/users/usersList">/users/usersList</a></td>
-                        <td class="text-center">none</td>
-                        <td>Get list of all users - by token admin.</td>
-                    </tr>
+                
+                 
                     <tr>
                         <td>POST</td>
-                        <td>/users</td>
+                        <td>/users/register</td>
                         <td>
                             <pre>
-{ 
-fullName: {
-firstName: Gila,
-lastName: Vilner
-},
-"email": "gila@gmail.com",
-"password": "gila31kd3Fg8"
-} </pre>
+                            {
+                                "firstName": "shir",
+                                "lastName": "weiss",
+                                "email": "shir@example.com",
+                                "password": "123456",
+                                "date_created": "2002-11-30T22:00:00.000Z",
+                                "role": "user"
+                            }
+                             </pre>
                         </td>
-                        <td>Add a new user to the data base ,<a class="text-decoration-none"
-                                href="https://github.com/GiliVilner/toysProject/blob/master/models/userModel.js">if
-                                you want to see the template of valid user.</a></td>
+                        <td>Add a new user to the data base </td>
                     </tr>
                     <tr>
                         <td>POST (login)</td>
@@ -116,42 +103,15 @@ lastName: Vilner
                         <td>
                             <pre>
 {
-    "email": "gila@gmail.com",
-    "password": "gila31kd3Fg8"
+    "email": "shir@example.com",
+    "password": "123456"
 } </pre>
                         </td>
                         <td>User login, if the email and password are correct the server will respond with a token,<br>
-                            <a class="text-decoration-none"
-                                href="https://github.com/GiliVilner/toysProject/blob/master/models/userModel.js">if
-                                you want to see the template of valid user.</a>
+                           
                         </td>
                     </tr>
-                    <tr>
-                        <td>DELETE</td>
-                        <td>/users/{idDel}</td>
-                        <td></td>
-                        <td>Delete a user from the data base. <strong> Admin token can delete every user , and user can
-                                delete only himself.</strong>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>PUT</td>
-                        <td>/users/{idEdit}</td>
-                        <td>
-                            <pre>
-fullName: {
-firstName: Maor,
-lastName: Gabay
-},
-"email": "MaorGabay@gabay.com",
-"password": "Maor31kd3Fg8"
-                             </pre>
-                        </td>
-                        <td>Update your user in the data base,<strong> Admin token can edit every user data , and user
-                                can
-                                edit only himself.</strong>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
         </div>
@@ -216,7 +176,7 @@ lastName: Gabay
                     <tr>
                         <td>GET</td>
                         <td><a
-                                href="https://toysproject-uoff.onrender.com/toys/prices?min=50&max=200">/toys/prices?min=50&max=200</a>
+                                href="https://toysproject-uoff.onrender.com/toys/prices?min=10&max=200">/toys/prices?min=50&max=200</a>
                         </td>
                         <td class="text-center">none</td>
                         <td>Get a list of the toys by min & max , it will present 10 results per page.</td>
@@ -288,7 +248,7 @@ lastName: Gabay
                     <use xlink:href="#bootstrap"></use>
                 </svg>
             </a>
-            <span class="mb-3 mb-md-0 text-muted">© 2023 , Gila Vilner Pro</span>
+            <span class="mb-3 mb-md-0 text-muted">© 2023 , Avital Weiss Pro</span>
         </div>
 
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex me-5">
@@ -296,7 +256,7 @@ lastName: Gabay
                 </a></li>
             <li class="ms-3"><a class="text-muted" href="#"><i class="bi bi-linkedin"></i>
                 </a></li>
-            <li class="ms-3"><a class="text-muted" href="https://github.com/GiliVilner/toysProject"><i
+            <li class="ms-3"><a class="text-muted" href="#"><i
                         class="bi bi-github"></i>
                 </a></li>
         </ul>

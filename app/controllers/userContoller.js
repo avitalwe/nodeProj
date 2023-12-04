@@ -1,7 +1,8 @@
 const bcrypt = require("bcryptjs");
 const Joi = require("joi");
-const { User } = require("../models/userModel.js");
+const { User ,validUser} = require("../models/userModel.js");
 const { generateToken } = require("../utils/jwt");
+const { auth, authNoPermistion } = require("../middlewares/auth");
 
 const userJoiSchema = {
     login: Joi.object().keys({
@@ -82,6 +83,40 @@ exports.users = async (req, res, next) => {
         }
    
 };
+exports.editUser = async (req, res) => {
+    let idEdit = req.params.editId;
+        let validBody = validUser(req.body);
+        if (validBody.error) {
+          return res.status(400).json(validBody.error.details);
+        }
+        try{
+      
+          let data;
+       
+      
+        data = await User.updateOne({ _id: idEdit }, req.body);
+          res.json(data);
+      
+        }
+        catch (err) {
+          console.log(err);
+          res.status(500).json({ err })
+        }
+},
+exports.deleteUser =  async (req, res) => {
+    try {
+        let delId = req.params.delId;
+        let data;
+            data = await User.deleteOne({ _id: delId })
+       
+        res.json(data);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ msg: "there error try again later", err })
+    }
+}
+
 
 
 

@@ -1,4 +1,4 @@
-const { Toy } = require("../models/toyModel.js");
+const { Toy ,validateToy} = require("../models/toyModel.js");
 const { decodeToken } = require("../utils/jwt");
 const bcrypt = require("bcryptjs");
 
@@ -26,7 +26,7 @@ exports.toyCtrl = {
             res.status(500).json({ msg: "there error try again later", err })
         }
     },
-    getToy: async (req, res) => {
+    getToys: async (req, res) => {
         let perPage = req.query.perPage || 10;
         let page = req.query.page || 1;
         try {
@@ -41,6 +41,24 @@ exports.toyCtrl = {
             res.status(500).json({ msg: "there error try again later", err })
         }
     },
+    getToy: async (req, res) => {
+        try {
+            const toyId = req.params.id;
+    
+            let data = await Toy.findById(toyId);
+    
+            if (!data) {
+                return res.status(404).json({ msg: "Toy not found" });
+            }
+    
+            res.json(data);
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: "There was an error, please try again later", err });
+        }
+    },
+    
     toyByCategory: async (req, res) => {
         let perPage = req.query.perPage || 10;
         let page = req.query.page || 1;
@@ -113,84 +131,62 @@ exports.toyCtrl = {
             res.sendStatus(400);
         }
     },
-    editToy: async (req, res) => {
-        let idEdit = req.params.editId;
-            // let validBody = userValid(req.body);
-            // if (validBody.error) {
-            //   return res.status(400).json(validBody.error.details);
-            // }
-            try{
-          
-              let data;
-            //   if (req.tokenData._role == "admin") {
-            //     req.body.password = await bcrypt.hash(req.body.password, 10)
-          
-            //     data = await UserModel.updateOne({ _id: idEdit }, req.body);
-            //   }
-            //   else if (idEdit == req.tokenData.user_id) {
-            //     req.body.password = await bcrypt.hash(req.body.password, 10)
-          
-            //     data = await UserModel.updateOne({ _id: idEdit }, req.body);
-            //   }
-            //   else {
-            //     data = [{ status: "failed", msg: "You are trying to do an operation that is not enabled!" }]
-            //   }
-            //req.body.password = await bcrypt.hash(req.body.password, 10)
-          
-            data = await Toy.updateOne({ _id: idEdit }, req.body);
-              res.json(data);
-          
-            }
-            catch (err) {
-              console.log(err);
-              res.status(500).json({ err })
-            }
-    },
-    deleteToy: async (req, res) => {
+    editToy: async (req, res,next) => {
         try {
-            let dellId = req.params.delId;
-            let data;
-            if (req.tokenData.role == "admin") {
-                data = await Toy.deleteOne({ _id: delId })
-            }
-            else {
-                data = await Toy.deleteOne({ _id: delId, user_id: req.tokenData._id })
-            }
-            res.json(data);
+            const { editId } = req.params;
+            const updates = req.body;
+            const  id_user = res.locals.id_user;
+            const validate = validateToy(updates);
+            if (validate.error)
+                throw Error(validate.error);
+            let toy = await Toy.findOne({ _id: editId });
+            if (!toy)
+                return res.status(404).send({ msg: "Toy not found" });
+            if (String(toy.id_user) !==  id_user)
+                return res.status(404).send({ msg: "You cannot update this toy" });
+    
+            toy = await Toy.findByIdAndUpdate(editId, updates, { new: true });
+            res.status(200).send(toy);
+        } catch (error) {
+            next(error);
         }
-        catch (err) {
-            console.log(err);
-            res.status(500).json({ msg: "there error try again later", err })
+    },
+    deleteToy: async (req, res,next) => {
+        try {
+            const  id  = req.params.delId;
+            const body = req.body;
+            const id_user = res.locals.id_user;
+            let toy = await Toy.findOne({ _id: id });
+            if (!toy)
+                return res.status(404).send({ msg: "Toy not found" });
+            if (String(toy.id_user) !== id_user)
+                return res.status(404).send({ msg: "You cannot delete this toy" });
+            toy = await Toy.findByIdAndDelete(id, body, { new: true });
+            res.status(200).send(toy);
+        
+        } catch (error) {
+            next(error);
         }
     }
 };
-// router.put("/:idEdit", auth, async (req, res) => {
-//     let idEdit = req.params.idEdit;
-//     let validBody = userValid(req.body);
-//     if (validBody.error) {
-//       return res.status(400).json(validBody.error.details);
-//     }
-//     try{
-  
-//       let data;
-//       if (req.tokenData._role == "admin") {
-//         req.body.password = await bcrypt.hash(req.body.password, 10)
-  
-//         data = await UserModel.updateOne({ _id: idEdit }, req.body);
-//       }
-//       else if (idEdit == req.tokenData.user_id) {
-//         req.body.password = await bcrypt.hash(req.body.password, 10)
-  
-//         data = await UserModel.updateOne({ _id: idEdit }, req.body);
-//       }
-//       else {
-//         data = [{ status: "failed", msg: "You are trying to do an operation that is not enabled!" }]
-//       }
-//       res.json(data);
-  
-//     }
-//     catch (err) {
-//       console.log(err);
-//       res.status(500).json({ err })
-//     }
-//   })
+exports.updateToy = async (req, res, next) => {
+    try {
+        const { editId } = req.params;
+        const updates = req.body;
+        const user_id = res.locals.user_id;
+
+        const validate = joiSchema.update.validate(updates);
+        if (validate.error)
+            throw Error(validate.error);
+        let toy = await Toy.findOne({ _id: editId });
+        if (!toy)
+            return res.status(404).send({ msg: "Toy not found" });
+        if (String(toy.user_id) !== user_id)
+            return res.status(404).send({ msg: "You cannot update this toy" });
+
+        toy = await Toy.findByIdAndUpdate(editId, updates, { new: true });
+        res.status(200).send(toy);
+    } catch (error) {
+        next(error);
+    }
+}

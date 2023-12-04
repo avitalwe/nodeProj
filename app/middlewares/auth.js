@@ -7,10 +7,9 @@ exports.auth = (role) => {
         token = token.split(" ")[1];
         try {
             const payload = decodeToken(token);
-            // console.log(payload);
-            // if (role && payload._doc.role !== role) return res.sendStatus(401);
             res.locals.id_user = payload._doc._id;
-            console.log(payload._doc._id);
+            
+              
             next();
         } catch (error) {
             next(error);

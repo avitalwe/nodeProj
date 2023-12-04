@@ -1,6 +1,7 @@
 const express = require("express");
 const Joi = require("joi");
-const { register, login ,users} = require("../controllers/userContoller");
+const { register, login ,users,editUser,deleteUser} = require("../controllers/userContoller");
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 const userJoiSchema = {
