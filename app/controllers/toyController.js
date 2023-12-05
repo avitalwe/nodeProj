@@ -90,25 +90,13 @@ exports.toyCtrl = {
             if (minp && maxP) {
                 dbQuery = { ...dbQuery, $and: [{ price: { $gte: minP } }, { price: { $lte: maxP } }] }
             }
-            // if (minP && maxP) {
-               
-            // }
-            // else if (maxP) {
-            //     let data = await Toy.find({ price: { $lte: maxP } })
-            //         .limit(perPage)
-            //         .skip((page - 1) * perPage)
-            //         .sort({ [sort]: reverse })
-            // } else if (minP) {
-            //     let data = await Toy.find({ price: { $gte: minP } })
-            //         .limit(perPage)
-            //         .skip((page - 1) * perPage)
-            //         .sort({ [sort]: reverse })
-            // } else {
-            //     let data = await Toy.find({})
-            //         .limit(perPage)
-            //         .skip((page - 1) * perPage)
-            //         .sort({ [sort]: reverse })
-            // }
+           
+            else if (maxP) {
+               dbQuery = {...dbQuery, price: { $lte: maxP } }
+           
+           } else if (minP) {
+                 dbQuery= { ...dbQuery,price: { $gte: minP } }
+           }
              let data = await Toy.find(dbQuery)
                     .limit(perPage)
                     .skip((page - 1) * perPage)
