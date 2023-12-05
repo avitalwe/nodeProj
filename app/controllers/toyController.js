@@ -87,7 +87,7 @@ exports.toyCtrl = {
             let minP = req.query.min;
             let maxP = req.query.max;
             let dbQuery = {};
-            if (minp && maxP) {
+            if (minP && maxP) {
                 dbQuery = { ...dbQuery, $and: [{ price: { $gte: minP } }, { price: { $lte: maxP } }] }
             }
            
